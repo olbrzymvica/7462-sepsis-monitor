@@ -39,6 +39,7 @@ jobs:
                any::tidyverse
                any::data.table
                any::googledrive
+               any::ggplot2
                
       - name: Run script
         run: |
