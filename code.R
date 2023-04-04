@@ -6,7 +6,7 @@ library(googledrive)
 source("sepsis_monitor_functions.R")
 
 #reading file
-file_link <- "https://drive.google.com/file/d/1pH0zGLKzuQz9KqixikuPythYqgINWWob/view?usp=sharing"
+file_link <- "https://drive.google.com/file/d/1XfmwcKpyQrX3UH0yF2ht6VwbmxHMuj1h/view?usp=share_link"
 sepsis <- drive_read_string(file_link) %>%
   read_csv()
 
@@ -23,3 +23,5 @@ up_sepsis %>% write_csv("sepsis_report_up.csv")
 drive_put(media = "sepsis_report_up.csv",  
           path = "https://drive.google.com/drive/u/1/folders/1iR5y6jUC2qjC7DTj9mNwMrzUaTOpPjgl",
           name = "sepsis_report_up.csv")
+
+a<-getPatient(002525)

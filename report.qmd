@@ -16,34 +16,39 @@ library(data.table)
 library(lubridate)
 library(googledrive)
 
-file_link <- "https://drive.google.com/file/d/1pH0zGLKzuQz9KqixikuPythYqgINWWob/view?usp=sharing"
+#the latest version of the report
+file_link <- "https://drive.google.com/file/d/1XfmwcKpyQrX3UH0yF2ht6VwbmxHMuj1h/view?usp=share_link"
 sepsis <- drive_read_string(file_link) %>%
   read_csv()
-```
 
-```{r}
-print("yes")
+#previous version of the report
+file_link <- "https://drive.google.com/file/d/1pH0zGLKzuQz9KqixikuPythYqgINWWob/view?usp=share_link"
+sepsis_prev <- drive_read_string(file_link) %>%
+  read_csv()
 ```
-
 
 Table of all patients with sepsis and their vital signs:
 
 ```{r}
 #Table 1
 sepsis %>% filter(SepsisLabel==1) %>%
-        select(-ICULOS, -SepsisLabel, -lastUpdate)
+        select(-ICULOS, -SepsisLabel, -lastUpdate) %>%
+        knitr::kable()
 ```
 
-The changes in parameters in all patients with sepsis:
+The changes in parameters in all patients with sepsis over the last hour:
 
 ```{r}
-sepsis %>% filter(SepsisLabel==1) %>%
-        #############
+joined <- left_join(sepsis, sepsis_prev, by = "PatientID") 
+joined %>% filter(SepsisLabel.x==1) %>%
+    mutate(HR_change=HR.x-HR.y, Temp_change=Temp.x-Temp.y, Resp_change=Resp.x-Resp.y) %>%
+    select(PatientID, HR_change, Temp_change, Resp_change) %>%
+    knitr::kable()
 ```
 
 Plots of changes in parameters for all patients who currently have sepsis:
 
 ```{r}
-sepsis %>% filter(SepsisLabel==1) %>%
+joined %>% filter(SepsisLabel==1) %>%
 ```
 
