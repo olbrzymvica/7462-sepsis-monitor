@@ -22,9 +22,12 @@ file_link <- "https://drive.google.com/file/d/1pH0zGLKzuQz9KqixikuPythYqgINWWob/
 sepsis <- drive_read_string(file_link) %>%
   read_csv()
 
+drive_put(media = "sepsis_report_up.csv",  
+          path = "https://drive.google.com/drive/u/1/folders/1iR5y6jUC2qjC7DTj9mNwMrzUaTOpPjgl",
+          name = "sepsis_report.csv")
 up_sepsis<-updatePatients(sepsis)
 up_sepsis %>% write_csv("sepsis_report_up.csv")
 
 drive_put(media = "sepsis_report_up.csv",  
           path = "https://drive.google.com/drive/u/1/folders/1iR5y6jUC2qjC7DTj9mNwMrzUaTOpPjgl",
-          name = "sepsis_report.csv")
+          name = "sepsis_report_up.csv")

@@ -1,0 +1,45 @@
+---
+title: "Sepsis_report"
+author: "Elzbieta Jodlowska-Siewert"
+format: gfm
+execute:
+  eval: true
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r include=FALSE}
+library(shiny)
+library(tidyverse)
+library(data.table)
+library(lubridate)
+library(googledrive)
+
+file_link <- "https://drive.google.com/file/d/1pH0zGLKzuQz9KqixikuPythYqgINWWob/view?usp=sharing"
+sepsis <- drive_read_string(file_link) %>%
+  read_csv()
+```
+
+Table of all patients with sepsis and their vital signs:
+
+```{r}
+#Table 1
+sepsis %>% filter(SepsisLabel==1) %>%
+        select(-ICULOS, -SepsisLabel, -lastUpdate)
+```
+
+The changes in parameters in all patients with sepsis:
+
+```{r}
+sepsis %>% filter(SepsisLabel==1) %>%
+        #############
+```
+
+Plots of changes in parameters for all patients who currently have sepsis:
+
+```{r}
+sepsis %>% filter(SepsisLabel==1) %>%
+```
+
