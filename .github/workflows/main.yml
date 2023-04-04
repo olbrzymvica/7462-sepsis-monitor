@@ -42,9 +42,7 @@ jobs:
                any::ggplot2
                
       - name: Run script
-        run: |
-          source: "R/code.R"
-        shell: Rscript {0} 
+        run: Rscript code.R
           
       - name: Render document
         uses: quarto-dev/quarto-actions/render@v2
