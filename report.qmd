@@ -12,9 +12,12 @@ editor: visual
 
 ```{r include=FALSE}
 library(tidyverse)
+library(ggplot2)
 library(data.table)
 library(lubridate)
 library(googledrive)
+
+source("sepsis_monitor_functions.R")
 
 #the latest version of the report
 file_link <- "https://drive.google.com/file/d/1XfmwcKpyQrX3UH0yF2ht6VwbmxHMuj1h/view?usp=share_link"
@@ -49,6 +52,22 @@ joined %>% filter(SepsisLabel.x==1) %>%
 Plots of changes in parameters for all patients who currently have sepsis:
 
 ```{r}
-joined %>% filter(SepsisLabel==1) %>%
+ids<- sepsis %>% filter(SepsisLabel==1) %>%
+  select(PatientID) %>%
+  unlist() %>%
+  unname()
+
+for (i in ids) {
+  a<-getPatient(i)
+  print(ggplot(data=a, aes(x=ICULOS, y=HR, group=1)) +
+  geom_line()+
+  geom_point())
+  print(ggplot(data=a, aes(x=ICULOS, y=Temp, group=1)) +
+  geom_line()+
+  geom_point())
+  print(ggplot(data=a, aes(x=ICULOS, y=Resp, group=1)) +
+  geom_line()+
+  geom_point())
+}
 ```
 

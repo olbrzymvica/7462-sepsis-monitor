@@ -1,6 +1,7 @@
 library(tidyverse)
 library(data.table) ## For the fread function
 library(lubridate)
+library(ggplot2)
 library(googledrive)
 
 source("sepsis_monitor_functions.R")
@@ -24,4 +25,8 @@ drive_put(media = "sepsis_report_up.csv",
           path = "https://drive.google.com/drive/u/1/folders/1iR5y6jUC2qjC7DTj9mNwMrzUaTOpPjgl",
           name = "sepsis_report_up.csv")
 
-a<-getPatient(002525)
+for (i in ids[4]) {
+  b<-getPatient(i)
+  ggplot(data=a, aes(x=ICULOS, y=HR, group=1)) +
+    geom_line()+
+    geom_point()}
