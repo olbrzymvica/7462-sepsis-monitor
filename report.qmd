@@ -1,7 +1,7 @@
 ---
 title: "Sepsis_report"
 author: "Elzbieta Jodlowska-Siewert"
-format: gfm
+format: html
 execute:
   eval: true
   echo: true
