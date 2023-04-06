@@ -54,7 +54,7 @@ Table of all patients with sepsis and their vital signs:
 
 ```{r}
 #Table 1
-sepsis %>% filter(SepsisLabel==0) %>%
+sepsis %>% filter(SepsisLabel==1) %>%
         select(-ICULOS, -SepsisLabel, -obsTime) %>%
         knitr::kable()
 ```
