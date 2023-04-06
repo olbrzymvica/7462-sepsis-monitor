@@ -19,14 +19,34 @@ library(googledrive)
 
 source("sepsis_monitor_functions.R")
 
-#the latest version of the report
+#reading in the last version of the report
 file_link <- "https://drive.google.com/file/d/1XfmwcKpyQrX3UH0yF2ht6VwbmxHMuj1h/view?usp=share_link"
-sepsis <- drive_read_string(file_link) %>%
+up_sepsis <- drive_read_string(file_link) %>%
   read_csv()
+up_sepsis %>% write_csv("sepsis_report_up.csv")
 
-#previous version of the report
-file_link <- "https://drive.google.com/file/d/1pH0zGLKzuQz9KqixikuPythYqgINWWob/view?usp=share_link"
-sepsis_prev <- drive_read_string(file_link) %>%
+#updating and creating updated report
+file_link<-"https://drive.google.com/file/d/1Rt8moMSEKvlsGTD8CM63mcFLpFR3o9TL/view?usp=share_link"
+new_data <- updateData(file_link)
+most_recent_data <- new_data %>%
+  group_by(PatientID) %>%
+  filter(obsTime == max(obsTime))
+
+#changing the name of the "sepsis_report_up.csv" to the "sepsis_report.csv" file
+drive_put(media = "sepsis_report_up.csv",  
+          path = "https://drive.google.com/drive/u/1/folders/1iR5y6jUC2qjC7DTj9mNwMrzUaTOpPjgl",
+          name = "sepsis_report.csv")
+
+most_recent_data %>% write_csv("sepsis_report_updated.csv")
+
+#uploading updated report
+drive_put(media = "sepsis_report_updated.csv",  
+          path = "https://drive.google.com/drive/u/1/folders/1iR5y6jUC2qjC7DTj9mNwMrzUaTOpPjgl",
+          name = "sepsis_report_up.csv")
+
+sepsis<-most_recent_data
+file_link <- "https://drive.google.com/file/d/1pH0zGLKzuQz9KqixikuPythYqgINWWob/view?usp=share_link" 
+sepsis_prev<- drive_read_string(file_link) %>%
   read_csv()
 ```
 
@@ -34,8 +54,8 @@ Table of all patients with sepsis and their vital signs:
 
 ```{r}
 #Table 1
-sepsis %>% filter(SepsisLabel==1) %>%
-        select(-ICULOS, -SepsisLabel, -lastUpdate) %>%
+sepsis %>% filter(SepsisLabel==0) %>%
+        select(-ICULOS, -SepsisLabel, -obsTime) %>%
         knitr::kable()
 ```
 
