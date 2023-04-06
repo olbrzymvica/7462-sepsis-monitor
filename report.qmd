@@ -19,6 +19,8 @@ library(googledrive)
 
 source("sepsis_monitor_functions.R")
 
+drive_deauth()
+
 #reading in the last version of the report
 file_link <- "https://drive.google.com/file/d/1XfmwcKpyQrX3UH0yF2ht6VwbmxHMuj1h/view?usp=share_link"
 up_sepsis <- drive_read_string(file_link) %>%
