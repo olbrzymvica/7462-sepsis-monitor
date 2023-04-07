@@ -21,35 +21,14 @@ source("sepsis_monitor_functions.R")
 
 drive_deauth()
 
-#reading in the last version of the report
-file_link <- "https://drive.google.com/file/d/1XfmwcKpyQrX3UH0yF2ht6VwbmxHMuj1h/view?usp=share_link"
-up_sepsis <- drive_read_string(file_link) %>%
-  read_csv()
-up_sepsis %>% write_csv("sepsis_report_up.csv")
-
-#updating and creating updated report
+#updating the report
 file_link<-"https://drive.google.com/file/d/1Rt8moMSEKvlsGTD8CM63mcFLpFR3o9TL/view?usp=share_link"
 new_data <- updateData(file_link)
 most_recent_data <- new_data %>%
   group_by(PatientID) %>%
   filter(obsTime == max(obsTime))
 
-#changing the name of the "sepsis_report_up.csv" to the "sepsis_report.csv" file
-drive_put(media = "sepsis_report_up.csv",  
-          path = "https://drive.google.com/drive/u/1/folders/1iR5y6jUC2qjC7DTj9mNwMrzUaTOpPjgl",
-          name = "sepsis_report.csv")
-
-most_recent_data %>% write_csv("sepsis_report_updated.csv")
-
-#uploading updated report
-drive_put(media = "sepsis_report_updated.csv",  
-          path = "https://drive.google.com/drive/u/1/folders/1iR5y6jUC2qjC7DTj9mNwMrzUaTOpPjgl",
-          name = "sepsis_report_up.csv")
-
 sepsis<-most_recent_data
-file_link <- "https://drive.google.com/file/d/1pH0zGLKzuQz9KqixikuPythYqgINWWob/view?usp=share_link" 
-sepsis_prev<- drive_read_string(file_link) %>%
-  read_csv()
 ```
 
 Table of all patients with sepsis and their vital signs:
@@ -64,11 +43,18 @@ sepsis %>% filter(SepsisLabel==1) %>%
 The changes in parameters in all patients with sepsis over the last hour:
 
 ```{r}
-joined <- left_join(sepsis, sepsis_prev, by = "PatientID") 
-joined %>% filter(SepsisLabel.x==1) %>%
-    mutate(HR_change=HR.x-HR.y, Temp_change=Temp.x-Temp.y, Resp_change=Resp.x-Resp.y) %>%
-    select(PatientID, HR_change, Temp_change, Resp_change) %>%
-    knitr::kable()
+new_data %>%
+  group_by(PatientID) %>%
+  arrange(desc(ICULOS))%>%
+  slice(1:2)%>%
+  ungroup()%>%
+  mutate(no=c(rep(c(2,1),50)))%>%
+  filter(SepsisLabel==1) %>%
+  pivot_wider(id_cols = "PatientID", names_from = "no", 
+              values_from = c("HR", "Temp", "Resp"), names_prefix = "gr")%>%
+  mutate(HR_change=HR_gr2-HR_gr1, Temp_change=Temp_gr2-Temp_gr1, Resp_change=Resp_gr2-Resp_gr1)%>%
+  select(PatientID, HR_change, Temp_change, Resp_change) %>%
+  knitr::kable()
 ```
 
 Plots of changes in parameters for all patients who currently have sepsis:
@@ -81,15 +67,18 @@ ids<- sepsis %>% filter(SepsisLabel==1) %>%
 
 for (i in ids) {
   a<-getPatient(i)
+  title<-paste("Patient ID:", i)
   print(ggplot(data=a, aes(x=ICULOS, y=HR, group=1)) +
   geom_line()+
-  geom_point())
+  geom_point()+
+  ggtitle(title))
   print(ggplot(data=a, aes(x=ICULOS, y=Temp, group=1)) +
   geom_line()+
-  geom_point())
+  geom_point()+
+  ggtitle(title))
   print(ggplot(data=a, aes(x=ICULOS, y=Resp, group=1)) +
   geom_line()+
-  geom_point())
+  geom_point()+
+  ggtitle(title))
 }
 ```
-

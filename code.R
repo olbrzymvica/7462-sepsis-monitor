@@ -12,7 +12,7 @@ df <- makeSepsisDataset()
 # We have to write the file to disk first, then upload it
 df %>% write_csv("sepsis_data_temp.csv")
 
-# Uploading happens here
+
 sepsis_file <- drive_put(media = "sepsis_data_temp.csv", 
                          path = "https://drive.google.com/drive/u/1/folders/1iR5y6jUC2qjC7DTj9mNwMrzUaTOpPjgl",
                          name = "sepsis_data.csv")
@@ -20,29 +20,11 @@ sepsis_file <- drive_put(media = "sepsis_data_temp.csv",
 # Set the file permissions so anyone can download this file.
 sepsis_file %>% drive_share_anyone()
 
-#reading file
-file_link <- "https://drive.google.com/file/d/1XfmwcKpyQrX3UH0yF2ht6VwbmxHMuj1h/view?usp=share_link"
-up_sepsis <- drive_read_string(file_link) %>%
-  read_csv()
-up_sepsis %>% write_csv("sepsis_report_up.csv")
-
 file_link<-"https://drive.google.com/file/d/1Rt8moMSEKvlsGTD8CM63mcFLpFR3o9TL/view?usp=share_link"
 new_data <- updateData(file_link)
 most_recent_data <- new_data %>%
   group_by(PatientID) %>%
   filter(obsTime == max(obsTime))
-
-#changing the name of the "sepsis_report_up.csv" to the "sepsis_report.csv" file
-drive_put(media = "sepsis_report_up.csv",  
-          path = "https://drive.google.com/drive/u/1/folders/1iR5y6jUC2qjC7DTj9mNwMrzUaTOpPjgl",
-          name = "sepsis_report.csv")
-
-most_recent_data %>% write_csv("sepsis_report_updated.csv")
-
-#uploading updated report
-drive_put(media = "sepsis_report_updated.csv",  
-          path = "https://drive.google.com/drive/u/1/folders/1iR5y6jUC2qjC7DTj9mNwMrzUaTOpPjgl",
-          name = "sepsis_report_up.csv")
 
 #FREAD:
 
